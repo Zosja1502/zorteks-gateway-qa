@@ -1555,17 +1555,92 @@
     }
     .biz-tip-box.is-visible { display: block; }
   }
-  @media (max-width: 768px) {
-    body { overflow-x: hidden; }
-    main, .main-grid, .dashboard-grid, .terminal-layout, .workspace {
-      display: flex !important; flex-direction: column !important;
-      grid-template-columns: 1fr !important; gap: 16px !important; padding: 12px !important;
+
+  /* === МОБИЛЬНЫЙ АДАПТИВ ПОД VANGUARD (<= 900px) === */
+  @media (max-width: 900px) {
+    html, body {
+      height: auto !important;
+      min-height: 100vh !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
-    header, .topbar, .navbar { flex-wrap: wrap !important; gap: 8px !important; padding: 10px 12px !important; }
-    .go-engine-badge { font-size: 10px; padding: 3px 8px; }
-    .scenario-top-line { flex-wrap: wrap; gap: 6px; }
-    .biz-tip-box.is-visible { display: block; }
-    table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+    .app-header {
+      height: auto !important;
+      min-height: auto !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+      padding: 10px 12px !important;
+    }
+    .app-header > * {
+      flex-wrap: wrap !important;
+      max-width: 100% !important;
+    }
+    .workspace-layout {
+      display: flex !important;
+      flex-direction: column !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    .terminal-pane,
+    .inspector-pane {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: none !important;
+      height: auto !important;
+      overflow: visible !important;
+      border-right: none !important;
+      border-left: none !important;
+    }
+    .pane-header-bar {
+      height: auto !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 8px !important;
+      padding: 12px !important;
+    }
+    .terminal-body {
+      padding: 12px !important;
+      gap: 14px !important;
+    }
+    .terminal-body > div,
+    .inspector-pane > div {
+      padding: 14px !important;
+    }
+    .balance-card, .balance-card > div,
+    .terminal-body [style*="grid-template-columns"],
+    .terminal-body [style*="display: flex"],
+    .terminal-body [style*="display:flex"],
+    form > div {
+      flex-direction: column !important;
+      grid-template-columns: 1fr !important;
+      align-items: flex-start !important;
+      gap: 12px !important;
+    }
+    .balance-card * {
+      white-space: nowrap !important;
+    }
+    .terminal-body [style*="font-size: 32px"],
+    .terminal-body [style*="font-size: 36px"],
+    .terminal-body [style*="font-size: 2rem"],
+    .terminal-body [style*="font-size:2rem"] {
+      font-size: clamp(1.45rem, 6.8vw, 2rem) !important;
+      white-space: nowrap !important;
+    }
+    input, select, textarea {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    table {
+      display: block !important;
+      width: 100% !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      white-space: nowrap !important;
+    }
+    .biz-tip-box.is-visible {
+      display: block !important;
+    }
   }
 </style>
 <!-- === [КОНЕЦ] ZORTEKS DEMO PATCH: ЧАСТЬ 1 (СТИЛИ И АДАПТИВ) === -->
