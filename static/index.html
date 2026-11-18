@@ -1496,5 +1496,191 @@
       }
     }
   </script>
+
+<!-- === [НАЧАЛО] ZORTEKS DEMO PATCH: ЧАСТЬ 1 (СТИЛИ И АДАПТИВ) === -->
+<style>
+  .go-engine-badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+    font-family: monospace; font-size: 11px; font-weight: 600; color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 6px; cursor: help; white-space: nowrap;
+  }
+  .go-engine-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 6px #38bdf8;
+  }
+  .scenario-btn { position: relative; overflow: visible !important; }
+  .biz-tip-trigger {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 3px 9px;
+    font-size: 11px; font-weight: 500; color: #10b981;
+    background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 999px; cursor: pointer; position: relative; z-index: 5;
+  }
+  .biz-tip-trigger:hover, .biz-tip-trigger.is-open {
+    background: rgba(16, 185, 129, 0.22); border-color: #10b981;
+  }
+  .biz-tip-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 50%; background: #10b981;
+    color: #052e16; font-weight: 800; font-size: 10px;
+  }
+  .biz-tip-box {
+    display: none; margin-top: 8px; padding: 10px 12px; background: #131c2e;
+    border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 8px;
+    font-size: 12px; line-height: 1.45; color: #e2e8f0; text-align: left; cursor: default;
+  }
+  .biz-tip-box strong { display: block; color: #10b981; margin-bottom: 3px; font-size: 11.5px; }
+  .zorteks-dynamic-cta {
+    margin-top: 14px; padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12));
+    border: 1px solid rgba(16, 185, 129, 0.45); border-radius: 10px;
+  }
+  .zorteks-dynamic-cta__title { font-size: 14px; font-weight: 700; color: #f8fafc; margin: 0 0 6px 0; }
+  .zorteks-dynamic-cta__text { font-size: 12.5px; line-height: 1.45; color: #cbd5e1; margin: 0 0 12px 0; }
+  .zorteks-dynamic-cta__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .zorteks-cta-btn-primary {
+    display: inline-flex; align-items: center; padding: 7px 14px;
+    background: #10b981; color: #052e16; font-size: 12px; font-weight: 700;
+    border-radius: 6px; text-decoration: none;
+  }
+  .zorteks-cta-btn-secondary {
+    display: inline-flex; align-items: center; padding: 7px 12px;
+    background: rgba(255, 255, 255, 0.06); color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.2); font-size: 12px;
+    border-radius: 6px; text-decoration: none;
+  }
+  @media (min-width: 769px) {
+    .biz-tip-box {
+      position: absolute; bottom: calc(100% + 8px); left: 0; right: 0;
+      margin-top: 0; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.75); z-index: 100;
+    }
+    .biz-tip-box.is-visible { display: block; }
+  }
+  @media (max-width: 768px) {
+    body { overflow-x: hidden; }
+    main, .main-grid, .dashboard-grid, .terminal-layout, .workspace {
+      display: flex !important; flex-direction: column !important;
+      grid-template-columns: 1fr !important; gap: 16px !important; padding: 12px !important;
+    }
+    header, .topbar, .navbar { flex-wrap: wrap !important; gap: 8px !important; padding: 10px 12px !important; }
+    .go-engine-badge { font-size: 10px; padding: 3px 8px; }
+    .scenario-top-line { flex-wrap: wrap; gap: 6px; }
+    .biz-tip-box.is-visible { display: block; }
+    table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+  }
+</style>
+<!-- === [КОНЕЦ] ZORTEKS DEMO PATCH: ЧАСТЬ 1 (СТИЛИ И АДАПТИВ) === -->
+
+
+<!-- === [НАЧАЛО] ZORTEKS DEMO PATCH: ЧАСТЬ 2 (ЛОГИКА, ПЛАШКИ И ПОДСКАЗКИ) === -->
+<script>
+  (function initZorteksDemoPatch() {
+    document.querySelectorAll('span, div').forEach((el) => {
+      if (el.children.length === 0 && el.textContent && el.textContent.includes('PROD-SANDBOX (Isolated)')) {
+        el.textContent = el.textContent.replace('PROD-SANDBOX (Isolated)', 'SANDBOX (In-Memory FastAPI)');
+      }
+    });
+
+    const headerTarget =
+      document.querySelector('header') ||
+      document.querySelector('.topbar') ||
+      Array.from(document.querySelectorAll('div')).find(
+        (el) => el.textContent && el.textContent.includes('FastAPI Core') && el.children.length > 1
+      );
+
+    if (headerTarget && !document.querySelector('.go-engine-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'go-engine-badge';
+      badge.title = 'Тесты гонки запросов (Race Condition) и антифрода написаны на Go (gateway_test.go)';
+      badge.innerHTML = '<span class="go-engine-dot"></span>QA Engine: Go (Race & Load)';
+      headerTarget.appendChild(badge);
+    }
+
+    const pickerHeader = document.querySelector('.scenario-picker-header');
+    if (pickerHeader && !document.querySelector('.zorteks-universal-note')) {
+      const note = document.createElement('div');
+      note.className = 'zorteks-universal-note';
+      note.style.cssText =
+        'margin: 8px 0 12px 0; padding: 9px 12px; background: rgba(56, 189, 248, 0.08); ' +
+        'border-left: 3px solid #38bdf8; border-radius: 6px; font-size: 12px; line-height: 1.45; color: #cbd5e1;';
+      note.innerHTML =
+        '<strong style="color: #38bdf8;">Платёжный шлюз — лишь один из примеров.</strong> ' +
+        'Мы настраиваем такие автотесты для любых проектов: интернет-магазинов, личных кабинетов, CRM, Telegram-ботов, форм заявок и ИИ-ассистентов.';
+      pickerHeader.insertAdjacentElement('afterend', note);
+    }
+
+    const TIPS = {
+      btnScenario1: { tag: 'Защита от сбоев при оплате', text: 'Проверка идеального пути клиента. Система гарантирует, что деньги не «зависнут» между банком и базой данных, баланс обновится без задержек, а клиент получит чек с первой секунды.' },
+      btnScenario2: { tag: 'Экономия на возвратах', text: 'Защита от двойного списания. Если у клиента моргнул интернет и он дважды нажал «Оплатить», система заблокирует дубль — вы не потеряете деньги на возвратах и не испортите репутацию.' },
+      btnScenario3: { tag: 'Защита счёта от слива бюджета', text: 'Страховка от взлома и ошибок сотрудников. Даже если злоумышленник получит доступ к кабинету или менеджер ошибётся в нулях, шлюз автоматически остановит аномально крупный перевод.' },
+      btnScenario4: { tag: 'Броня для ИИ-ботов и базы', text: 'Безопасность ваших ИИ-ассистентов. Злоумышленники прячут скрытые команды в комментариях, чтобы заставить ИИ выдать пароли или сделать бесплатный заказ. Фильтр отсекает такие атаки.' }
+    };
+
+    const runHistory = new Set();
+
+    function maybeShowCta() {
+      if (runHistory.size < 2 || document.querySelector('.zorteks-dynamic-cta')) return;
+      const verdictHeader = Array.from(document.querySelectorAll('h2, h3, div, span')).find(
+        (el) => el.textContent && el.textContent.trim() === 'Вердикт инспектора'
+      );
+      const container = verdictHeader ? verdictHeader.parentElement : null;
+      if (!container) return;
+
+      const cta = document.createElement('div');
+      cta.className = 'zorteks-dynamic-cta';
+      cta.innerHTML = `
+        <div class="zorteks-dynamic-cta__title">Нужен такой же контроль качества для вашего сайта или сервиса?</div>
+        <p class="zorteks-dynamic-cta__text">Настроим сквозные автотесты на Go / Playwright под любые задачи — от корзины и форм заявок до сложных API и ИИ-ботов — за 1–2 недели.</p>
+        <div class="zorteks-dynamic-cta__actions">
+          <a href="https://zorteks.ru" target="_blank" rel="noopener" class="zorteks-cta-btn-primary">Обсудить ваш проект →</a>
+          <a href="https://github.com" target="_blank" rel="noopener" class="zorteks-cta-btn-secondary">Исходники на GitHub</a>
+        </div>`;
+      container.appendChild(cta);
+    }
+
+    Object.entries(TIPS).forEach(([btnId, info]) => {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+
+      const trigger = document.createElement('span');
+      trigger.className = 'biz-tip-trigger';
+      trigger.innerHTML = `<span class="biz-tip-icon">?</span> ${info.tag}`;
+
+      const box = document.createElement('div');
+      box.className = 'biz-tip-box';
+      box.innerHTML = `<strong>Зачем это бизнесу:</strong>${info.text}`;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = box.classList.contains('is-visible');
+        document.querySelectorAll('.biz-tip-box').forEach((el) => el.classList.remove('is-visible'));
+        document.querySelectorAll('.biz-tip-trigger').forEach((el) => el.classList.remove('is-open'));
+        if (!isOpen) { box.classList.add('is-visible'); trigger.classList.add('is-open'); }
+      });
+
+      box.addEventListener('click', (e) => e.stopPropagation());
+      trigger.addEventListener('mouseenter', () => { if (window.innerWidth > 768) { box.classList.add('is-visible'); trigger.classList.add('is-open'); } });
+      btn.addEventListener('mouseleave', () => { if (window.innerWidth > 768) { box.classList.remove('is-visible'); trigger.classList.remove('is-open'); } });
+
+      btn.addEventListener('click', () => {
+        runHistory.add(btnId);
+        setTimeout(maybeShowCta, 300);
+        if (window.innerWidth <= 768) {
+          setTimeout(() => {
+            const verdictEl = Array.from(document.querySelectorAll('h2, h3, div, span')).find(
+              (el) => el.textContent && el.textContent.trim() === 'Вердикт инспектора'
+            );
+            if (verdictEl) verdictEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 350);
+        }
+      });
+
+      btn.appendChild(trigger);
+      btn.appendChild(box);
+    });
+  })();
+</script>
+<!-- === [КОНЕЦ] ZORTEKS DEMO PATCH: ЧАСТЬ 2 (ЛОГИКА, ПЛАШКИ И ПОДСКАЗКИ) === -->
+
+
 </body>
 </html>
